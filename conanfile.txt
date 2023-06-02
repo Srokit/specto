@@ -7,4 +7,5 @@ CMakeDeps
 CMakeToolchain
 
 [options]
+# Gives fftw3f* libs instead of fftw3*
 fftw*:precision=single

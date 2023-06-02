@@ -1,37 +1,69 @@
 cmake_minimum_required(VERSION 3.15)
-project(Specto)
+project(Specto VERSION 0.1 LANGUAGES CXX)
 
+# ==== START set misc options
+set(OUTDIR ${CMAKE_CURRENT_BINARY_DIR}/out)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTDIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTDIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTDIR}/bin)
+
+# Useful for certain IDEs' intellisense
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+# ==== END set misc options
 
-file(GLOB SOURCES "src/*.cc")
-
-include_directories(inc)
-add_library(specto SHARED ${SOURCES})
-
-add_executable(specto_test test/main.cc)
-target_link_libraries(specto_test specto)
-
-# Conan
+# ==== START Conan Deps
 find_package(SDL2 REQUIRED)
-target_link_libraries(specto SDL2::SDL2)
-target_include_directories(specto PRIVATE ${SDL2_INCLUDE_DIRS})
-
 find_package(FFTW3f REQUIRED)
-target_link_libraries(specto FFTW3::fftw3f)
-target_include_directories(specto PRIVATE ${FFTW3f_INCLUDE_DIRS})
+# ==== END Conan Deps
 
-set(AUDIO_FILE_H_PATH ${CMAKE_CURRENT_BINARY_DIR}/inc/AudioFile.h)
+# ==== START Download AudioFile.h
+set(AUDIO_FILE_INC_DIR ${CMAKE_CURRENT_BINARY_DIR}/audio_file_inc)
+set(AUDIO_FILE_H_PATH ${AUDIO_FILE_INC_DIR}/AudioFile.h)
 # Load audiofile single file header
 if (NOT EXISTS ${AUDIO_FILE_H_PATH})
-    message(STATUS "Downloading AudioFile.h")
-    file(DOWNLOAD https://raw.githubusercontent.com/adamstark/AudioFile/master/AudioFile.h ${AUDIO_FILE_H_PATH})
+    message(STATUS "Downloading AudioFile.h to \"${AUDIO_FILE_H_PATH}\"")
+    set(DL_URL "https://raw.githubusercontent.com/adamstark/AudioFile/master/AudioFile.h")
+    file(DOWNLOAD ${DL_URL} ${AUDIO_FILE_H_PATH})
+else()
+    message(STATUS "AudioFile.h already exists at \"${AUDIO_FILE_H_PATH}\"")
 endif()
-target_include_directories(specto PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/inc)
+# ==== END Download AudioFile.h
 
-set(SONG_PATH ${CMAKE_CURRENT_SOURCE_DIR}/test/TaylorSwift_IKnewYouWereTrouble_FullSong.wav)
+# ==== START specto lib definition
+set(SPECTO_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(SPECTO_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/inc)
+file(GLOB SPECTO_SOURCES "src/*.cc")
+
+add_library(specto SHARED ${SPECTO_SOURCES})
+add_library(specto_static STATIC ${SPECTO_SOURCES})
+
+# Set props for static and shared specto lib
+foreach(SPECTO_TARGET specto specto_static)
+    target_include_directories(${SPECTO_TARGET} PUBLIC ${SPECTO_INC_DIR})
+    target_include_directories(${SPECTO_TARGET} PRIVATE ${SPECTO_SRC_DIR})
+
+    target_link_libraries(${SPECTO_TARGET} FFTW3::fftw3f)
+    target_include_directories(${SPECTO_TARGET} PRIVATE ${FFTW3f_INCLUDE_DIRS})
+
+    target_include_directories(${SPECTO_TARGET} PRIVATE ${AUDIO_FILE_INC_DIR})
+endforeach()
+# ==== END specto lib definition
+
+# ==== START example executable
+set(EXAMPLE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/example)
+file(GLOB EXAMPLE_SOURCES "${EXAMPLE_DIR}/src/*.cc")
+add_executable(specto_example ${EXAMPLE_SOURCES})
+# Change library to specto instead of specto_static to use shared lib
+target_link_libraries(specto_example specto_static)
+target_link_libraries(specto_example SDL2::SDL2)
+target_include_directories(specto_example PRIVATE ${SDL2_INCLUDE_DIRS})
+# ==== END example executable
+
+# ==== START run example target
+set(SONG_PATH ${EXAMPLE_DIR}/res/TaylorSwift_IKnewYouWereTrouble_FullSong.wav)
 add_custom_target(
-        specto_test_run
-        COMMAND specto_test ${SONG_PATH}
-        DEPENDS specto_test
-        WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
-)
+        specto_example_run
+        COMMAND specto_example ${SONG_PATH}
+        DEPENDS specto_example_run
+        WORKING_DIRECTORY ${CMAKE_PROJECT_DIR})
+# ==== END run example target
