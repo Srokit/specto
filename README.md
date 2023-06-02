@@ -2,7 +2,7 @@
 
 A C++ library which draws a spectogram into an SDL window for a WAV file.
 
-# Install
+# Dev Setup
 
 Git clone this repo then
 
@@ -18,8 +18,5 @@ $ brew install cmake
 
 Then:
 ```
-$ conan install . --output-folder=./build --build=missing
-$ cd build
-$ cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release
-$ cmake --build .
+$ ./buildit.sh
 ```

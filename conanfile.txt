@@ -1,6 +1,10 @@
 [requires]
+fftw/3.3.10
 sdl/2.26.1
 
 [generators]
 CMakeDeps
 CMakeToolchain
+
+[options]
+fftw*:precision=single
