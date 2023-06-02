@@ -12,10 +12,19 @@
 
 #include "specto/spectogram.h"
 
-constexpr float kHopDurationSec = 10.0;
-constexpr int kNumFreqBins = 128;
-constexpr int kMinFreq = 20;
-constexpr int kMaxFreq = 10000;
+void printSpectogram(const specto::Spectogram& spectogram) {
+  int numWindows = spectogram->getNumWindows();
+  int numFrequencyBins = spectogram->getNumFrequencyBins();
+  for (int windowIndex = 0; windowIndex < numWindows; windowIndex++) {
+    for (int frequencyBinIndex = 0; frequencyBinIndex < numFrequencyBins;
+         frequencyBinIndex++) {
+      double dbfs = spectogram->getDBFSAtWindowIndexAndFrequencyBinIndex(
+          windowIndex, frequencyBinIndex);
+      std::cout << "Window: " << windowIndex << ", Frequency Bin: "
+                << frequencyBinIndex << ", DBFS: " << dbfs << std::endl;
+    }
+  }
+}
 
 int main(int argc, char **argv) {
   if (argc != 2) {
@@ -24,5 +33,9 @@ int main(int argc, char **argv) {
   }
   std::string filename(argv[1]);
   std::cout << "Loading file: " << filename << std::endl;
+
+  specto::Spectogram spectogram = specto::makeSpectogram();
+  spectogram->loadFile(filename);
+  printSpectogram(spectogram);
   return 0;
 }

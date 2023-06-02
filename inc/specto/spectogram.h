@@ -55,6 +55,7 @@ class ISpectogram {
   virtual int getNumWindows() = 0;
   virtual int getNumFrequencyBins() = 0;
   virtual double getDBFSAtWindowIndexAndFrequencyBinIndex(int, int) = 0;
+  virtual ~ISpectogram() = default;
 };
 
 inline static constexpr SpectogramOptions defaultSpectogramOptions() {
