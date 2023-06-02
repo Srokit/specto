@@ -14,6 +14,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # ==== START Conan Deps
 find_package(SDL2 REQUIRED)
 find_package(FFTW3f REQUIRED)
+# Test requires
+find_package(GTest REQUIRED)
 # ==== END Conan Deps
 
 # ==== START Download AudioFile.h
@@ -64,6 +66,25 @@ set(SONG_PATH ${EXAMPLE_DIR}/res/TaylorSwift_IKnewYouWereTrouble_FullSong.wav)
 add_custom_target(
         specto_example_run
         COMMAND specto_example ${SONG_PATH}
-        DEPENDS specto_example_run
         WORKING_DIRECTORY ${CMAKE_PROJECT_DIR})
 # ==== END run example target
+
+# ==== START specto unit tests
+set(SPECTO_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
+set(SPECTO_TEST_SRC_DIR ${SPECTO_TEST_DIR}/src)
+file(GLOB SPECTO_TEST_SOURCES "${SPECTO_TEST_SRC_DIR}/*.cc")
+add_executable(specto_test ${SPECTO_TEST_SOURCES})
+target_include_directories(specto_test PRIVATE ${SPECTO_TEST_SRC_DIR})
+target_link_libraries(specto_test specto_static)
+# Include specto private headers for unit testing
+target_include_directories(specto_test PRIVATE ${SPECTO_SRC_DIR})
+target_link_libraries(specto_test GTest::GTest)
+target_include_directories(specto_test PRIVATE ${GTest_INCLUDE_DIRS})
+# ==== END specto unit tests
+
+# ==== START run specto unit tests target
+add_custom_target(
+        specto_test_run
+        COMMAND specto_test
+        WORKING_DIRECTORY ${CMAKE_PROJECT_DIR})
+# ==== END run specto unit tests target
