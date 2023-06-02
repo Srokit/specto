@@ -1,22 +1,20 @@
 # Specto
 
-A C++ library which draws a spectogram into an SDL window for a WAV file.
+A C++ library which creates a data representation of a spectogram given a wav file.
 
-# Dev Setup
+You could draw this data using a UI lib. This lib just handles all the annoying
+algorithmic stuff (i.e. STFT, Frequency to Mel scale, Spectral Power to dBFS, etc.)
 
-Git clone this repo then
+# API Example
 
-If you don't have conan:
 ```
-$ pip install conan
-```
-
-Also install cmake if you don't have it!
-```
-$ brew install cmake
-```
-
-Then:
-```
-$ ./buildit.sh
+specto::Spectogram spec = specto::makeSpectogram();
+for (int i = 0; i < spec->getNumWindows(); ++i) {
+  for (int j = 0; j < spec->getNumFrequencyBins(); ++j) {
+    int x = YOUR_calcX(spec->getNumWindows());
+    int y = YOUR_calcY(spec->getNumFrequencyBins());
+    int dBFSVal = spec->getDBFSAtWindowIndexAndFrequencyBinIndex(i, j);
+    YOUR_drawSpectoSquareUsingDBFS(x, y, dBFSVal);
+  }
+}
 ```
