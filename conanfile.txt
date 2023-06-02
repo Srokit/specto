@@ -1,9 +1,11 @@
 [requires]
+audiofile/1.1.0
 fftw/3.3.10
-sdl/2.26.1
+
 
 [test_requires]
 gtest/1.10.0
+sdl/2.26.1
 
 [generators]
 CMakeDeps

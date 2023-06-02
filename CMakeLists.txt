@@ -14,22 +14,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # ==== START Conan Deps
 find_package(SDL2 REQUIRED)
 find_package(FFTW3f REQUIRED)
+find_package(audiofile REQUIRED)
 # Test requires
 find_package(GTest REQUIRED)
 # ==== END Conan Deps
-
-# ==== START Download AudioFile.h
-set(AUDIO_FILE_INC_DIR ${CMAKE_CURRENT_BINARY_DIR}/audio_file_inc)
-set(AUDIO_FILE_H_PATH ${AUDIO_FILE_INC_DIR}/AudioFile.h)
-# Load audiofile single file header
-if (NOT EXISTS ${AUDIO_FILE_H_PATH})
-    message(STATUS "Downloading AudioFile.h to \"${AUDIO_FILE_H_PATH}\"")
-    set(DL_URL "https://raw.githubusercontent.com/adamstark/AudioFile/master/AudioFile.h")
-    file(DOWNLOAD ${DL_URL} ${AUDIO_FILE_H_PATH})
-else()
-    message(STATUS "AudioFile.h already exists at \"${AUDIO_FILE_H_PATH}\"")
-endif()
-# ==== END Download AudioFile.h
 
 # ==== START specto lib definition
 set(SPECTO_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -47,7 +35,7 @@ foreach(SPECTO_TARGET specto specto_static)
     target_link_libraries(${SPECTO_TARGET} FFTW3::fftw3f)
     target_include_directories(${SPECTO_TARGET} PRIVATE ${FFTW3f_INCLUDE_DIRS})
 
-    target_include_directories(${SPECTO_TARGET} PRIVATE ${AUDIO_FILE_INC_DIR})
+    target_link_libraries(${SPECTO_TARGET} audiofile::audiofile)
 endforeach()
 # ==== END specto lib definition
 
