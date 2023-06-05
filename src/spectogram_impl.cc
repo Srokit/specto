@@ -10,15 +10,12 @@
 
 #include "spectogram_impl.h"
 
-#include <cmath>
+#include <memory>
 
 #include "AudioFile.h"
 
 #include "fft.h"
 #include "mel.h"
-
-#include <iostream>
-#include <memory>
 
 namespace specto_impl {
 
