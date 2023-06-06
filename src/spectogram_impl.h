@@ -12,6 +12,8 @@
 
 #include <string>
 
+#include "AudioFile.h"
+
 #include "specto/spectogram.h"
 
 namespace specto_impl {
@@ -23,6 +25,12 @@ class SpectogramImpl : public specto::ISpectogram {
   int getNumWindows() override;
   int getNumFrequencyBins() override;
   double getDBFSAtWindowIndexAndFrequencyBinIndex(int, int) override;
+ private:
+  void calcSpectorgramFromAudioFile_(const AudioFile<float>&);
+
+  int windowLen_;
+  int windowHop_;
+  int numMelBins_;
 };
 
 }  // namespace specto_impl

@@ -18,34 +18,24 @@ namespace specto {
 
 struct SpectogramOptions {
   /**
-   * The number of windows to run fft over.
-   * This will affect window size. It will be calculated as
-   * windowSize = fileDuration * sampleRate / (numWindows * (1 - windowOverlapFrac))
+   * The window length for each FFT.
+   * Preferably a power of 2 so that padding is not required for fft.
+   * 
+   * This will also dictate the maximum frequency that can be represented.
+   * MaxFreq = floor(windowLen / 2) + 1
    */
-  int numWindows;
+  int windowLen;
 
   /**
-   * The fraction of the window that will overlap with the preceeding window.
-   * Should be between 0 and 1.
+   * The number of that the STFT should hop in between windows.
+   * If this is less than windowLen, then the windows will overlap.
    */
-  double windowOverlapFrac;
+  int windowHop;
 
   /**
-   * The number of frequency bins to include in the spectogram.
-   * Note that these bins will be spaced lograrithmically
-   * according to the Mel scale.
+   * The number of mel bins to include in the spectogram.
    */
-  int numFrequencyBins;
-
-  /**
-   * The minimum frequency to include in the spectogram.
-   */
-  int minFrequency;
-
-  /**
-   * The maximum frequency to include in the spectogram.
-   */
-  int maxFrequency;
+  int numMelBins;
 };
 
 // TODO(Stan): Add comments to this interface.
@@ -60,11 +50,9 @@ class ISpectogram {
 
 inline static constexpr SpectogramOptions defaultSpectogramOptions() {
   return {
-    .numWindows = 1000,
-    .windowOverlapFrac = 0.5,
-    .numFrequencyBins = 100,
-    .minFrequency = 0,
-    .maxFrequency = 8000,
+    .windowLen = 16384,  // 2^14 (power of 2 preferred)
+    .windowHop = 4096,  // 1/4th of above
+    .numMelBins = 128,
   };
 }
 

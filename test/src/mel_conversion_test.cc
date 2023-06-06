@@ -1,7 +1,7 @@
 /**
  * File: test/src/mel_test.cc
  * Author: Stan Rokita <stan@stansa.dev>
- * Desc: Unit tests for mel helpers.
+ * Desc: Unit tests for mel conversion helpers.
  * Version: 0.1
  * Date: 2023-06-02
  * 
@@ -13,7 +13,7 @@
 
 #include "gtest/gtest.h"
 
-#include "mel.h"
+#include "mel_convert.h"
 
 static constexpr std::array<std::tuple<float, float>, 5> getMelToFreqTcs() {
   /**
@@ -34,21 +34,21 @@ static constexpr std::array<std::tuple<float, float>, 5> getMelToFreqTcs() {
 // Arbitrarily chosen
 static constexpr float allowedDiff = 1.0f;
 
-TEST(MelTest, MelToFreqZero) {
+TEST(MelConversionTest, MelToFreqZero) {
   EXPECT_FLOAT_EQ(specto_impl::melToFreq(0.0f), 0.0f);
 }
 
-TEST(MelTest, MelToFreqSimple) {
+TEST(MelConversionTest, MelToFreqSimple) {
   for (auto [in, expected] : getMelToFreqTcs()) {
     EXPECT_NEAR(specto_impl::melToFreq(in), expected, allowedDiff);
   }
 }
 
-TEST(MelTest, FreqToMelZero) {
+TEST(MelConversionTest, FreqToMelZero) {
   EXPECT_FLOAT_EQ(specto_impl::freqToMel(0.0f), 0.0f);
 }
 
-TEST(MelTest, FreqToMelSimple) {
+TEST(MelConversionTest, FreqToMelSimple) {
   // Opposite of above
   for (auto [expected, in] : getMelToFreqTcs()) {
     EXPECT_NEAR(specto_impl::freqToMel(in), expected, allowedDiff);

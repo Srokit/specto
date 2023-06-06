@@ -16,6 +16,6 @@
 
 namespace specto_impl {
 
-std::vector<float> fft(float*, int);
+std::vector<float> fft(const std::vector<float>&);
 
 }  // namespace specto_impl

@@ -15,7 +15,7 @@
 #include "AudioFile.h"
 
 #include "fft.h"
-#include "mel.h"
+#include "mel_convert.h"
 
 namespace specto_impl {
 
@@ -23,7 +23,8 @@ namespace specto_impl {
 SpectogramImpl::SpectogramImpl(const specto::SpectogramOptions&) {}
 
 bool SpectogramImpl::loadFile(const std::string& filePath) {
-  // TODO(Stan): Implement
+  // TODO(Stan): Load file into AudioFile
+
   return true;
 }
 
@@ -42,6 +43,15 @@ double SpectogramImpl::getDBFSAtWindowIndexAndFrequencyBinIndex(
   // TODO(Stan): Implement
   return 0;
 }
+
+void SpectogramImpl::calcSpectorgramFromAudioFile_(
+    const AudioFile<float>& audioFile) {
+  int numSamples = audioFile.getNumSamplesPerChannel();
+  int numChannels = audioFile.getNumChannels();
+  int sampleRate = audioFile.getSampleRate();
+
+}
+  
 
 }  // namespace specto_impl
 

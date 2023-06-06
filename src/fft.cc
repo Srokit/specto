@@ -16,20 +16,21 @@
 
 namespace specto_impl {
 
-std::vector<float> fft(float* input, int size) {
-    std::vector<float> output(size);
+std::vector<float> fft(const std::vector<float>& input) {
+    size_t n = input.size();
+    std::vector<float> output(n);
     fftwf_complex* in = reinterpret_cast<fftwf_complex*>(
-        fftwf_malloc(sizeof(fftwf_complex) * size));
+        fftwf_malloc(sizeof(fftwf_complex) * n));
     fftwf_complex* out = reinterpret_cast<fftwf_complex*>(
-        fftwf_malloc(sizeof(fftwf_complex) * size));
+        fftwf_malloc(sizeof(fftwf_complex) * n));
     fftwf_plan plan = fftwf_plan_dft_1d(
-        size, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
-    for (int i = 0; i < size; i++) {
+        n, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+    for (int i = 0; i < n; i++) {
         in[i][0] = input[i];
         in[i][1] = 0;
     }
     fftwf_execute(plan);
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < n; i++) {
         output[i] = std::sqrt(out[i][0] * out[i][0] + out[i][1] * out[i][1]);
     }
     fftwf_destroy_plan(plan);
