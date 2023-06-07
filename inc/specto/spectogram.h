@@ -42,6 +42,7 @@ struct SpectogramOptions {
 class ISpectogram {
  public:
   virtual bool loadFile(const std::string&) = 0;
+  virtual void loadDataWithSampleRate(const std::vector<float>&, int) = 0;
   virtual int getNumWindows() = 0;
   virtual int getNumFrequencyBins() = 0;
   virtual double getDBFSAtWindowIndexAndFrequencyBinIndex(int, int) = 0;

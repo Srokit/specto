@@ -17,6 +17,7 @@
 #include "fft.h"
 #include "hanning.h"
 #include "mel_convert.h"
+#include "mel_filter_banks.h"
 
 namespace specto_impl {
 
@@ -34,36 +35,38 @@ bool SpectogramImpl::loadFile(const std::string& filePath) {
   return true;
 }
 
+void SpectogramImpl::loadDataWithSampleRate(
+    const std::vector<float>& data, int sampleRate) {
+  audioData_ = data;
+  sampleRate_ = sampleRate;
+  calcSpectorgram_();
+}
+
 int SpectogramImpl::getNumWindows() {
   // TODO(Stan): Implement
-  return 0;
+  return numWindows_;
 }
 
 int SpectogramImpl::getNumFrequencyBins() {
   // TODO(Stan): Implement
-  return 0;
+  return numMelBins_;
 }
 
 double SpectogramImpl::getDBFSAtWindowIndexAndFrequencyBinIndex(
     int windowIndex, int frequencyBinIndex) {
   // TODO(Stan): Implement
-  return 0;
+  return spectogram_.getVal(frequencyBinIndex, windowIndex);
 }
 
 void SpectogramImpl::calcSpectorgram_() {
   calcValues_();
-  for (int winI = 0; winI < numWindows_; winI++) {
-    // Get windowed audio data
-    std::vector<float> windowedAudioData(
-        audioData_.begin() + winI * windowHop_,
-        audioData_.begin() + winI * windowHop_ + windowLen_);
-    hanningInPlace(&windowedAudioData);
-    std::vector<float> fftData = fft(windowedAudioData);
-    stft_.addRow(fftData);
-  }
+  calcStft_();
+  calcMelFilterBanks_();
+  multiplyMfbAndStft_();
+  // spectogram_ is now matrix with dims (numMelBins_ x numWindows_)
 }
 
-int SpectogramImpl::calcValues_() {
+void SpectogramImpl::calcValues_() {
   // Note this will not allocate a window on end if it is not full
   numWindows_ = (audioData_.size() - windowLen_) / windowHop_ + 1;
   numFftBins_ = (windowLen_ % 2 == 0) ? windowLen_ / 2 : windowLen_ / 2 + 1;
@@ -81,9 +84,30 @@ void SpectogramImpl::loadAudioFile_(const std::string& filePath) {
 }
 
 void SpectogramImpl::calcMelFilterBanks_() {
-  float maxFreq = fftBinToHz_(numFftBins_);
-  float maxMel = hzToMel(maxFreq);
-  float melDelta = maxMel / numMelBins_;
+  // Get the mel filter banks
+  melFilterBanks_.addMultipleRows(
+    makeMelFilterBanks({
+      .numBanks = numMelBins_,
+      .numFreqBins = numFftBins_,
+      .samplingResolution = samplingResolution_,
+    }));
+}
+
+void SpectogramImpl::calcStft_() {
+  for (int winI = 0; winI < numWindows_; winI++) {
+    // Get windowed audio data
+    std::vector<float> windowedAudioData(
+        audioData_.begin() + winI * windowHop_,
+        audioData_.begin() + winI * windowHop_ + windowLen_);
+    hanningInPlace(&windowedAudioData);
+    std::vector<float> fftData = fft(windowedAudioData);
+    stft_.addRow(fftData);
+  }
+}
+
+void SpectogramImpl::multiplyMfbAndStft_() {
+  // Multiply mel filter banks and stft
+  spectogram_ = melFilterBanks_.multByOther(stft_.transpose());
 }
 
 }  // namespace specto_impl

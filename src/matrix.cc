@@ -20,6 +20,13 @@ Matrix Matrix::withDimensions(int rows, int cols) {
   return m;
 }
 
+Matrix& Matrix::operator=(const Matrix& other) {
+  rows_ = other.rows_;
+  cols_ = other.cols_;
+  data_ = other.data_;
+  return *this;
+}
+
 void Matrix::setVal(int row, int col, float val) {
   data_[row * cols_ + col] = val;
 }
@@ -52,6 +59,22 @@ void Matrix::addRow(const std::vector<float>& row) {
   data_.insert(data_.end(), row.begin(), row.end());
   rows_++;
   cols_ = row.size();
+}
+
+void Matrix::addMultipleRows(const std::vector<std::vector<float>>& rows) {
+  for (const auto& row : rows) {
+    addRow(row);
+  }
+}
+
+Matrix Matrix::transpose() const {
+  Matrix result = Matrix::withDimensions(cols_, rows_);
+  for (int r = 0; r < rows_; ++r) {
+    for (int c = 0; c < cols_; ++c) {
+      result.setVal(c, r, getVal(r, c));
+    }
+  }
+  return result;
 }
 
 }  // namespace specto_impl

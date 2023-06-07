@@ -24,14 +24,18 @@ class SpectogramImpl : public specto::ISpectogram {
  public:
   explicit SpectogramImpl(const specto::SpectogramOptions&);
   bool loadFile(const std::string&) override;
+  void loadDataWithSampleRate(const std::vector<float>&, int) override;
   int getNumWindows() override;
   int getNumFrequencyBins() override;
   double getDBFSAtWindowIndexAndFrequencyBinIndex(int, int) override;
+
  private:
   void calcSpectorgram_();
-  int calcValues_();
+  void calcValues_();
   void loadAudioFile_(const std::string&);
   void calcMelFilterBanks_();
+  void calcStft_();
+  void multiplyMfbAndStft_();
   float fftBinToHz_(int bin) { return samplingResolution_ * bin;}
 
   int windowLen_;

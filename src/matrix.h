@@ -23,6 +23,8 @@ class Matrix {
   static Matrix withDimensions(int, int);
   Matrix(): rows_(0), cols_(0) {}
 
+  Matrix& operator=(const Matrix&);
+
   void setVal(int, int, float);
   float getVal(int, int) const;
   inline int getNumRows() const { return rows_; }
@@ -35,6 +37,11 @@ class Matrix {
 
   // Caller is responsible for ensuring col dimension is consistent.
   void addRow(const std::vector<float>&);
+
+  // Caller is responsible for ensuring col dimension is consistent.
+  void addMultipleRows(const std::vector<std::vector<float>>&);
+
+  Matrix transpose() const;
 
  private:
 

@@ -67,7 +67,11 @@ TEST(MelFilterBanks, SimpleTest) {
    */
   std::vector<int> expectedPeaks {135, 298, 491, 723};
 
-  auto banks = specto_impl::makeMelFilterBanks(numBanks, numFreqBins, sampReso);
+  auto banks = specto_impl::makeMelFilterBanks({
+      .numBanks = numBanks,
+      .numFreqBins = numFreqBins,
+      .samplingResolution = sampReso
+  });
 
   EXPECT_EQ(banks.size(), numBanks);
   EXPECT_EQ(banks[0].size(), numFreqBins);

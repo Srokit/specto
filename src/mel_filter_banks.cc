@@ -15,7 +15,10 @@
 namespace specto_impl {
 
 std::vector<std::vector<float>> makeMelFilterBanks(
-    int numBanks, int numFreqBins, float samplingResolution) {
+    const FilterBanksOptions& opts) {
+  int numBanks = opts.numBanks;
+  int numFreqBins = opts.numFreqBins;
+  float samplingResolution = opts.samplingResolution;
   std::vector<std::vector<float>> banks;
   banks.reserve(numBanks);
   for (int i = 0; i < numBanks; ++i) {
