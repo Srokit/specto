@@ -12,22 +12,12 @@
 
 #include "specto/spectogram.h"
 
-// The printSpecogram function will print all freq bins for
-// each window by skipping this many windows and then printing again
-const int kPrintWindowsToSkipBy = 500;
+#include "ui.h"
 
-void printSpectogram(const specto::Spectogram& spectogram) {
-  int numWindows = spectogram->getNumWindows();
-  int numFrequencyBins = spectogram->getNumFrequencyBins();
-  for (int windowIndex = 0; windowIndex < numWindows; windowIndex += kPrintWindowsToSkipBy) {
-    for (int frequencyBinIndex = 0; frequencyBinIndex < numFrequencyBins;
-         frequencyBinIndex++) {
-      double dbfs = spectogram->getLoudnessFactorAtWindowAndFreqBin(
-          windowIndex, frequencyBinIndex);
-      std::cout << "Window: " << windowIndex << ", Frequency Bin: "
-                << frequencyBinIndex << ", Loudness Fact: " << dbfs << std::endl;
-    }
-  }
+void printSpecStats(const specto::Spectogram& spectogram) {
+  std::cout << "Num Windows: " << spectogram->getNumWindows() << std::endl;
+  std::cout << "Num Frequency Bins: " << spectogram->getNumFrequencyBins()
+            << std::endl;
 }
 
 int main(int argc, char **argv) {
@@ -40,6 +30,7 @@ int main(int argc, char **argv) {
 
   specto::Spectogram spectogram = specto::makeSpectogram();
   spectogram->loadFile(filename);
-  printSpectogram(spectogram);
+  printSpecStats(spectogram);
+  example_ui::drawSpectogram(spectogram);
   return 0;
 }
