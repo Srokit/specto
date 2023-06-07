@@ -36,7 +36,6 @@ class SpectogramImpl : public specto::ISpectogram {
   void calcMelFilterBanks_();
   void calcStft_();
   void multiplyMfbAndStft_();
-  float fftBinToHz_(int bin) { return samplingResolution_ * bin;}
 
   int windowLen_;
   int windowHop_;
