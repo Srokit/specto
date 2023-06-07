@@ -8,27 +8,57 @@
  * Copyright: Copyright (c) 2023 Stan Rokita
  */
 
+#include <cmath>
 #include <vector>
 
 #include "gtest/gtest.h"
 
 #include "specto/spectogram.h"
 
-TEST(SpectogramTest, Dimensions) {
-  const int kNumMelBins = 10;
-  // Same as data size
-  const int kSampleRate = 10;
-  const std::vector<float> kInputData {1.0f, 2.0f, 3.0f, 4.0f, 5.0f,
-                       6.0f, 7.0f, 8.0f, 9.0f, 10.0f};
-  specto::Spectogram spectogram = specto::makeSpectogram({
-    .windowLen = 2,
-    .windowHop = 1,
-    .numMelBins = kNumMelBins,
-  });
-  spectogram->loadDataWithSampleRate(kInputData, kSampleRate);
-  // kExpNumWins = (dataSize - windowLen) / windowHop + 1
-  const int kExpectedNumWindows = 9;
+// Datasize is also the samplerate for default
+const int kDefaultDataSize = 100;
+const int kDefaultWinLen = 10;
+const int kDefaultHopSize = 5;
+// kExpNumWins = (dataSize - windowLen) / windowHop + 1
+// = (100 - 10) / 5 + 1 = 19
+const int kDefaultExpectedNumWindows = 19;
+const int kDefaultNumMelBins = 10;
 
-  EXPECT_EQ(spectogram->getNumWindows(), kExpectedNumWindows);
-  EXPECT_EQ(spectogram->getNumFrequencyBins(), kNumMelBins);
+std::vector<float> makeXHzSinWave(float x, int sampleRate, int numSamples) {
+  std::vector<float> data(numSamples, 0.0f);
+  for (int i = 0; i < numSamples; ++i) {
+    data[i] = std::sin(2.0f * M_PI * x * i / sampleRate);
+  }
+  return data;
+}
+
+specto::Spectogram makeDefaultSpectogram() {
+  // Samplerate and datasize are same
+  const std::vector<float> kInputData = makeXHzSinWave(
+      5.0f, kDefaultDataSize, kDefaultDataSize);
+  specto::Spectogram spectogram = specto::makeSpectogram({
+    .windowLen = kDefaultWinLen,
+    .windowHop = kDefaultHopSize,
+    .numMelBins = kDefaultNumMelBins,
+  });
+  spectogram->loadDataWithSampleRate(kInputData, kDefaultDataSize);
+  return spectogram;
+}
+
+TEST(SpectogramTest, Dimensions) {
+  // Same as data size
+  auto spectogram = makeDefaultSpectogram();
+
+  EXPECT_EQ(spectogram->getNumWindows(), kDefaultExpectedNumWindows);
+  EXPECT_EQ(spectogram->getNumFrequencyBins(), kDefaultNumMelBins);
+}
+
+TEST(SpectogramTest, Between0And1Inclusive) {
+  auto spectogram = makeDefaultSpectogram();
+  for (int i = 0; i < spectogram->getNumWindows(); i++) {
+    for (int j = 0; j < spectogram->getNumFrequencyBins(); j++) {
+      EXPECT_GE(spectogram->getDBFSAtWindowIndexAndFrequencyBinIndex(i, j), 0.0f);
+      EXPECT_LE(spectogram->getDBFSAtWindowIndexAndFrequencyBinIndex(i, j), 1.0f);
+    }
+  }
 }

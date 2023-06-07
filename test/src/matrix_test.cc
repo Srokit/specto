@@ -128,3 +128,37 @@ TEST(MatrixTest, Transpose) {
   EXPECT_FLOAT_EQ(result.getVal(2, 0), 3.0f);
   EXPECT_FLOAT_EQ(result.getVal(2, 1), 6.0f);
 }
+
+TEST(MatrixTest, Max) {
+  specto_impl::Matrix m1 = specto_impl::Matrix::withDimensions(2, 3);
+  m1.setVal(0, 0, 1.0f);
+  m1.setVal(0, 1, 2.0f);
+  m1.setVal(0, 2, 3.0f);
+  m1.setVal(1, 0, 4.0f);
+  m1.setVal(1, 1, 5.0f);
+  m1.setVal(1, 2, 6.0f);
+
+  EXPECT_FLOAT_EQ(m1.getMax(), 6.0f);
+}
+
+TEST(MatrixTest, MultScalar) {
+  specto_impl::Matrix m1 = specto_impl::Matrix::withDimensions(2, 3);
+  m1.setVal(0, 0, 1.0f);
+  m1.setVal(0, 1, 2.0f);
+  m1.setVal(0, 2, 3.0f);
+  m1.setVal(1, 0, 4.0f);
+  m1.setVal(1, 1, 5.0f);
+  m1.setVal(1, 2, 6.0f);
+
+  m1.multScalarInPlace(2.0f);
+
+  EXPECT_EQ(m1.getNumRows(), 2);
+  EXPECT_EQ(m1.getNumCols(), 3);
+
+  EXPECT_FLOAT_EQ(m1.getVal(0, 0), 2.0f);
+  EXPECT_FLOAT_EQ(m1.getVal(0, 1), 4.0f);
+  EXPECT_FLOAT_EQ(m1.getVal(0, 2), 6.0f);
+  EXPECT_FLOAT_EQ(m1.getVal(1, 0), 8.0f);
+  EXPECT_FLOAT_EQ(m1.getVal(1, 1), 10.0f);
+  EXPECT_FLOAT_EQ(m1.getVal(1, 2), 12.0f);
+}

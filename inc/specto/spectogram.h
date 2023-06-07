@@ -45,7 +45,7 @@ class ISpectogram {
   virtual void loadDataWithSampleRate(const std::vector<float>&, int) = 0;
   virtual int getNumWindows() = 0;
   virtual int getNumFrequencyBins() = 0;
-  virtual double getDBFSAtWindowIndexAndFrequencyBinIndex(int, int) = 0;
+  virtual float getDBFSAtWindowIndexAndFrequencyBinIndex(int, int) = 0;
   virtual ~ISpectogram() = default;
 };
 

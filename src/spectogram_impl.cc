@@ -21,7 +21,6 @@
 
 namespace specto_impl {
 
-// TODO(Stan): Make this configurable
 SpectogramImpl::SpectogramImpl(const specto::SpectogramOptions& opts)
     : windowLen_(opts.windowLen), windowHop_(opts.windowHop),
       numMelBins_(opts.numMelBins) {}
@@ -43,18 +42,15 @@ void SpectogramImpl::loadDataWithSampleRate(
 }
 
 int SpectogramImpl::getNumWindows() {
-  // TODO(Stan): Implement
   return numWindows_;
 }
 
 int SpectogramImpl::getNumFrequencyBins() {
-  // TODO(Stan): Implement
   return numMelBins_;
 }
 
-double SpectogramImpl::getDBFSAtWindowIndexAndFrequencyBinIndex(
+float SpectogramImpl::getDBFSAtWindowIndexAndFrequencyBinIndex(
     int windowIndex, int frequencyBinIndex) {
-  // TODO(Stan): Implement
   return spectogram_.getVal(frequencyBinIndex, windowIndex);
 }
 
@@ -63,6 +59,7 @@ void SpectogramImpl::calcSpectorgram_() {
   calcStft_();
   calcMelFilterBanks_();
   multiplyMfbAndStft_();
+  normalize_();
   // spectogram_ is now matrix with dims (numMelBins_ x numWindows_)
 }
 
@@ -106,8 +103,15 @@ void SpectogramImpl::calcStft_() {
 }
 
 void SpectogramImpl::multiplyMfbAndStft_() {
-  // Multiply mel filter banks and stft
   spectogram_ = melFilterBanks_.multByOther(stft_.transpose());
+}
+
+void SpectogramImpl::normalize_() {
+  float maxVal = spectogram_.getMax();
+  // This can happen if data is odd or configuration is odd
+  // Other checks should make this unlikely
+  if (maxVal == 0.0f) return;
+  spectogram_.multScalarInPlace(1.0f / maxVal);
 }
 
 }  // namespace specto_impl

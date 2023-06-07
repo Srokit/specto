@@ -10,6 +10,8 @@
 
 #include "matrix.h"
 
+#include <algorithm>
+
 namespace specto_impl {
 
 Matrix Matrix::withDimensions(int rows, int cols) {
@@ -75,6 +77,16 @@ Matrix Matrix::transpose() const {
     }
   }
   return result;
+}
+
+float Matrix::getMax() const {
+  return *std::max_element(data_.begin(), data_.end());
+}
+
+void Matrix::multScalarInPlace(float scalar) {
+  for (float& val : data_) {
+    val *= scalar;
+  }
 }
 
 }  // namespace specto_impl

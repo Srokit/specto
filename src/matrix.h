@@ -43,8 +43,12 @@ class Matrix {
 
   Matrix transpose() const;
 
- private:
+  // Undefined behavior if matrix is empty.
+  float getMax() const;
 
+  void multScalarInPlace(float);
+
+ private:
   int rows_;
   int cols_;
   std::vector<float> data_;

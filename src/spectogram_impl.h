@@ -27,7 +27,7 @@ class SpectogramImpl : public specto::ISpectogram {
   void loadDataWithSampleRate(const std::vector<float>&, int) override;
   int getNumWindows() override;
   int getNumFrequencyBins() override;
-  double getDBFSAtWindowIndexAndFrequencyBinIndex(int, int) override;
+  float getDBFSAtWindowIndexAndFrequencyBinIndex(int, int) override;
 
  private:
   void calcSpectorgram_();
@@ -36,6 +36,7 @@ class SpectogramImpl : public specto::ISpectogram {
   void calcMelFilterBanks_();
   void calcStft_();
   void multiplyMfbAndStft_();
+  void normalize_();
 
   int windowLen_;
   int windowHop_;
