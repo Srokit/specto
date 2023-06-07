@@ -11,9 +11,11 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include "AudioFile.h"
 
+#include "matrix.h"
 #include "specto/spectogram.h"
 
 namespace specto_impl {
@@ -26,11 +28,22 @@ class SpectogramImpl : public specto::ISpectogram {
   int getNumFrequencyBins() override;
   double getDBFSAtWindowIndexAndFrequencyBinIndex(int, int) override;
  private:
-  void calcSpectorgramFromAudioFile_(const AudioFile<float>&);
+  void calcSpectorgram_();
+  void loadAudioFile_(const std::string&);
 
   int windowLen_;
   int windowHop_;
   int numMelBins_;
+
+  bool didNotLoadFile_;
+
+  // Mono channel audio data.
+  // Will be filled with the first channel audio data from file.
+  std::vector<float> audioData_;
+
+  int sampleRate_;
+
+  Matrix spectogram_;
 };
 
 }  // namespace specto_impl

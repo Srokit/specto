@@ -28,7 +28,13 @@ float Matrix::getVal(int row, int col) const {
   return data_[row * cols_ + col];
 }
 
-Matrix Matrix::multByOther(const Matrix& other) {
+void Matrix::setDims(int rows, int cols) {
+  rows_ = rows;
+  cols_ = cols;
+  data_.resize(rows * cols, 0.0f);
+}
+
+Matrix Matrix::multByOther(const Matrix& other) const {
   Matrix result = Matrix::withDimensions(rows_, other.cols_);
   for (int r = 0; r < rows_; ++r) {
     for (int oc = 0; oc < other.cols_; ++oc) {

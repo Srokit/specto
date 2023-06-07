@@ -15,15 +15,21 @@
 #include "AudioFile.h"
 
 #include "fft.h"
+#include "hanning.h"
 #include "mel_convert.h"
 
 namespace specto_impl {
 
 // TODO(Stan): Make this configurable
-SpectogramImpl::SpectogramImpl(const specto::SpectogramOptions&) {}
+SpectogramImpl::SpectogramImpl(const specto::SpectogramOptions& opts)
+    : windowLen_(opts.windowLen), windowHop_(opts.windowHop),
+      numMelBins_(opts.numMelBins) {}
 
 bool SpectogramImpl::loadFile(const std::string& filePath) {
-  // TODO(Stan): Load file into AudioFile
+  loadAudioFile_(filePath);
+  if (didNotLoadFile_) return false;
+
+  calcSpectorgram_();
 
   return true;
 }
@@ -44,14 +50,19 @@ double SpectogramImpl::getDBFSAtWindowIndexAndFrequencyBinIndex(
   return 0;
 }
 
-void SpectogramImpl::calcSpectorgramFromAudioFile_(
-    const AudioFile<float>& audioFile) {
-  int numSamples = audioFile.getNumSamplesPerChannel();
-  int numChannels = audioFile.getNumChannels();
-  int sampleRate = audioFile.getSampleRate();
-
+void SpectogramImpl::calcSpectorgram_() {
+  hanningInPlace(&audioData_);
 }
-  
+
+void SpectogramImpl::loadAudioFile_(const std::string& filePath) {
+  AudioFile<float> audioFile;
+  audioFile.load(filePath);
+  didNotLoadFile_ = audioFile.getNumSamplesPerChannel() == 0;
+  if (didNotLoadFile_) return;
+  // Copy float data from first channel to audioData_
+  audioData_ = audioFile.samples[0];
+  sampleRate_ = static_cast<int>(audioFile.getSampleRate());
+}
 
 }  // namespace specto_impl
 

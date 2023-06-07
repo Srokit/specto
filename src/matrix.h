@@ -21,17 +21,19 @@ namespace specto_impl {
 class Matrix {
  public:
   static Matrix withDimensions(int, int);
+  Matrix(): rows_(0), cols_(0) {}
 
   void setVal(int, int, float);
   float getVal(int, int) const;
   inline int getNumRows() const { return rows_; }
   inline int getNumCols() const { return cols_; }
 
+  void setDims(int, int);
+
   // Caller is responsible for ensuring dimensions are correct.
-  Matrix multByOther(const Matrix&);
+  Matrix multByOther(const Matrix&) const;
 
  private:
-  Matrix() = default;
 
   int rows_;
   int cols_;
