@@ -57,8 +57,8 @@ TEST(SpectogramTest, Between0And1Inclusive) {
   auto spectogram = makeDefaultSpectogram();
   for (int i = 0; i < spectogram->getNumWindows(); i++) {
     for (int j = 0; j < spectogram->getNumFrequencyBins(); j++) {
-      EXPECT_GE(spectogram->getDBFSAtWindowIndexAndFrequencyBinIndex(i, j), 0.0f);
-      EXPECT_LE(spectogram->getDBFSAtWindowIndexAndFrequencyBinIndex(i, j), 1.0f);
+      EXPECT_GE(spectogram->getLoudnessFactorAtWindowAndFreqBin(i, j), 0.0f);
+      EXPECT_LE(spectogram->getLoudnessFactorAtWindowAndFreqBin(i, j), 1.0f);
     }
   }
 }

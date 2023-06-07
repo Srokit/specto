@@ -27,7 +27,7 @@ class SpectogramImpl : public specto::ISpectogram {
   void loadDataWithSampleRate(const std::vector<float>&, int) override;
   int getNumWindows() override;
   int getNumFrequencyBins() override;
-  float getDBFSAtWindowIndexAndFrequencyBinIndex(int, int) override;
+  float getLoudnessFactorAtWindowAndFreqBin(int, int) override;
 
  private:
   void calcSpectorgram_();

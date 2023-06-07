@@ -49,7 +49,7 @@ int SpectogramImpl::getNumFrequencyBins() {
   return numMelBins_;
 }
 
-float SpectogramImpl::getDBFSAtWindowIndexAndFrequencyBinIndex(
+float SpectogramImpl::getLoudnessFactorAtWindowAndFreqBin(
     int windowIndex, int frequencyBinIndex) {
   return spectogram_.getVal(frequencyBinIndex, windowIndex);
 }
