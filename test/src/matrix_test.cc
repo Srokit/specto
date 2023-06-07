@@ -64,3 +64,22 @@ TEST(MatrixTest, MultiplyDiffDimensions) {
   EXPECT_FLOAT_EQ(result.getVal(1, 0), 139.0f);
   EXPECT_FLOAT_EQ(result.getVal(1, 1), 154.0f);
 }
+
+TEST(MatrixTest, AddRow) {
+  specto_impl::Matrix m1;
+  m1.addRow({1.0f, 2.0f});
+
+  EXPECT_EQ(m1.getNumRows(), 1);
+  EXPECT_EQ(m1.getNumCols(), 2);
+
+  EXPECT_FLOAT_EQ(m1.getVal(0, 0), 1.0f);
+  EXPECT_FLOAT_EQ(m1.getVal(0, 1), 2.0f);
+
+  m1.addRow({3.0f, 4.0f});
+
+  EXPECT_EQ(m1.getNumRows(), 2);
+  EXPECT_EQ(m1.getNumCols(), 2);
+
+  EXPECT_FLOAT_EQ(m1.getVal(1, 0), 3.0f);
+  EXPECT_FLOAT_EQ(m1.getVal(1, 1), 4.0f);
+}

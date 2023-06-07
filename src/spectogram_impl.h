@@ -29,6 +29,7 @@ class SpectogramImpl : public specto::ISpectogram {
   double getDBFSAtWindowIndexAndFrequencyBinIndex(int, int) override;
  private:
   void calcSpectorgram_();
+  int calcNumWindows_();
   void loadAudioFile_(const std::string&);
 
   int windowLen_;
@@ -43,6 +44,8 @@ class SpectogramImpl : public specto::ISpectogram {
 
   int sampleRate_;
 
+  Matrix stft_;
+  Matrix melFilterBanks_;
   Matrix spectogram_;
 };
 

@@ -48,4 +48,10 @@ Matrix Matrix::multByOther(const Matrix& other) const {
   return result;
 }
 
+void Matrix::addRow(const std::vector<float>& row) {
+  data_.insert(data_.end(), row.begin(), row.end());
+  rows_++;
+  cols_ = row.size();
+}
+
 }  // namespace specto_impl

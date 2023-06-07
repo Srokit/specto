@@ -51,7 +51,13 @@ double SpectogramImpl::getDBFSAtWindowIndexAndFrequencyBinIndex(
 }
 
 void SpectogramImpl::calcSpectorgram_() {
-  hanningInPlace(&audioData_);
+  int numWindows = calcNumWindows_();
+
+}
+
+int SpectogramImpl::calcNumWindows_() {
+  // Note this will not allocate a window on end if it is not full
+  return (audioData_.size() - windowLen_) / windowHop_ + 1;
 }
 
 void SpectogramImpl::loadAudioFile_(const std::string& filePath) {

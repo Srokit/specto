@@ -33,6 +33,9 @@ class Matrix {
   // Caller is responsible for ensuring dimensions are correct.
   Matrix multByOther(const Matrix&) const;
 
+  // Caller is responsible for ensuring col dimension is consistent.
+  void addRow(const std::vector<float>&);
+
  private:
 
   int rows_;
