@@ -52,7 +52,15 @@ double SpectogramImpl::getDBFSAtWindowIndexAndFrequencyBinIndex(
 
 void SpectogramImpl::calcSpectorgram_() {
   int numWindows = calcNumWindows_();
-
+  for (int winI = 0; winI < numWindows; winI++) {
+    // Get windowed audio data
+    std::vector<float> windowedAudioData(
+        audioData_.begin() + winI * windowHop_,
+        audioData_.begin() + winI * windowHop_ + windowLen_);
+    hanningInPlace(&windowedAudioData);
+    std::vector<float> fftData = fft(windowedAudioData);
+    stft_.addRow(fftData);
+  }
 }
 
 int SpectogramImpl::calcNumWindows_() {

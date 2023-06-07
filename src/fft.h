@@ -16,6 +16,7 @@
 
 namespace specto_impl {
 
+// Will return fft that is size N / 2 if N is even else N / 2 + 1
 std::vector<float> fft(const std::vector<float>&);
 
 }  // namespace specto_impl

@@ -33,7 +33,7 @@ TEST(FftTest, SingleProminantFreq) {
   auto input = make1SecXHzSignal(10.0f);
   auto result = specto_impl::fft(input);
 
-  EXPECT_EQ(result.size(), input.size());
+  EXPECT_EQ(result.size(), input.size() / 2);
 
   // The 10Hz signal should be the most prominent and therefore largest value
   // is in that index.
