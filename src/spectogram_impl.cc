@@ -51,8 +51,8 @@ double SpectogramImpl::getDBFSAtWindowIndexAndFrequencyBinIndex(
 }
 
 void SpectogramImpl::calcSpectorgram_() {
-  int numWindows = calcNumWindows_();
-  for (int winI = 0; winI < numWindows; winI++) {
+  calcValues_();
+  for (int winI = 0; winI < numWindows_; winI++) {
     // Get windowed audio data
     std::vector<float> windowedAudioData(
         audioData_.begin() + winI * windowHop_,
@@ -63,9 +63,11 @@ void SpectogramImpl::calcSpectorgram_() {
   }
 }
 
-int SpectogramImpl::calcNumWindows_() {
+int SpectogramImpl::calcValues_() {
   // Note this will not allocate a window on end if it is not full
-  return (audioData_.size() - windowLen_) / windowHop_ + 1;
+  numWindows_ = (audioData_.size() - windowLen_) / windowHop_ + 1;
+  numFftBins_ = (windowLen_ % 2 == 0) ? windowLen_ / 2 : windowLen_ / 2 + 1;
+  samplingResolution_ = static_cast<float>(sampleRate_) / numFftBins_;
 }
 
 void SpectogramImpl::loadAudioFile_(const std::string& filePath) {
@@ -76,6 +78,12 @@ void SpectogramImpl::loadAudioFile_(const std::string& filePath) {
   // Copy float data from first channel to audioData_
   audioData_ = audioFile.samples[0];
   sampleRate_ = static_cast<int>(audioFile.getSampleRate());
+}
+
+void SpectogramImpl::calcMelFilterBanks_() {
+  float maxFreq = fftBinToHz_(numFftBins_);
+  float maxMel = hzToMel(maxFreq);
+  float melDelta = maxMel / numMelBins_;
 }
 
 }  // namespace specto_impl

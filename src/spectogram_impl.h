@@ -29,12 +29,18 @@ class SpectogramImpl : public specto::ISpectogram {
   double getDBFSAtWindowIndexAndFrequencyBinIndex(int, int) override;
  private:
   void calcSpectorgram_();
-  int calcNumWindows_();
+  int calcValues_();
   void loadAudioFile_(const std::string&);
+  void calcMelFilterBanks_();
+  float fftBinToHz_(int bin) { return samplingResolution_ * bin;}
 
   int windowLen_;
   int windowHop_;
   int numMelBins_;
+  int numWindows_;
+  // Also equal to nyquist / samplingResolution
+  int numFftBins_;
+  float samplingResolution_;
 
   bool didNotLoadFile_;
 

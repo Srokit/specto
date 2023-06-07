@@ -35,22 +35,22 @@ static constexpr std::array<std::tuple<float, float>, 5> getMelToFreqTcs() {
 static constexpr float allowedDiff = 1.0f;
 
 TEST(MelConversionTest, MelToFreqZero) {
-  EXPECT_FLOAT_EQ(specto_impl::melToFreq(0.0f), 0.0f);
+  EXPECT_FLOAT_EQ(specto_impl::melToHz(0.0f), 0.0f);
 }
 
 TEST(MelConversionTest, MelToFreqSimple) {
   for (auto [in, expected] : getMelToFreqTcs()) {
-    EXPECT_NEAR(specto_impl::melToFreq(in), expected, allowedDiff);
+    EXPECT_NEAR(specto_impl::melToHz(in), expected, allowedDiff);
   }
 }
 
 TEST(MelConversionTest, FreqToMelZero) {
-  EXPECT_FLOAT_EQ(specto_impl::freqToMel(0.0f), 0.0f);
+  EXPECT_FLOAT_EQ(specto_impl::hzToMel(0.0f), 0.0f);
 }
 
 TEST(MelConversionTest, FreqToMelSimple) {
   // Opposite of above
   for (auto [expected, in] : getMelToFreqTcs()) {
-    EXPECT_NEAR(specto_impl::freqToMel(in), expected, allowedDiff);
+    EXPECT_NEAR(specto_impl::hzToMel(in), expected, allowedDiff);
   }
 }
