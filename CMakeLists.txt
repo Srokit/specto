@@ -71,6 +71,10 @@ set(EX_MEL_DIR ${EXAMPLE_DIR}/mel_filter_bands_graph)
 file(GLOB EXAMPLE_MEL_SOURCES "${EX_MEL_DIR}/src/*.cc")
 add_executable(specto_mel_example ${EXAMPLE_MEL_SOURCES})
 target_link_libraries(specto_mel_example specto_static)
+target_link_libraries(specto_mel_example SDL2::SDL2)
+target_link_libraries(specto_mel_example sdl_ttf::sdl_ttf)
+target_include_directories(specto_mel_example PRIVATE ${SDL2_INCLUDE_DIRS})
+target_include_directories(specto_mel_example PRIVATE ${sdl_ttf_INCLUDE_DIRS})
 # ==== END mel filter bands example executable
 
 # ==== START run mel filter bands example target

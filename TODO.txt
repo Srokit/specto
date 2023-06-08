@@ -1,0 +1,3 @@
+23/06/08
+
+- Investigate issue where mel filter banks example draws mel banks off right side before reaching bottom

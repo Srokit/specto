@@ -28,8 +28,8 @@ struct MelFilterBandsOptions {
 class IMelFilterBands {
  public:
   virtual int getNumMelBands() = 0;
-  virtual int getFrequencyBins() = 0;
-  virtual float getWeightAtMelBandAndFreqBin(int, int) = 0;
+  virtual int getNumFrequencyBins() = 0;
+  virtual float getWeightAtFreqBinAndMelBand(int, int) = 0;
   virtual ~IMelFilterBands() = default;
 };
 
@@ -44,7 +44,7 @@ inline static constexpr MelFilterBandsOptions defaultMelFilterBandsOptions() {
   };
 }
 
-MelFilterBands createMelFilterBands(
+MelFilterBands makeMelFilterBands(
     MelFilterBandsOptions = defaultMelFilterBandsOptions());
 
 }  // namespace specto

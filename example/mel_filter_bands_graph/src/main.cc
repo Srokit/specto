@@ -8,7 +8,16 @@
  * Copyright: Copyright (c) 2023 Stan Rokita
  */
 
+#include "ui.h"
+
+#include "specto/mel_filter_bands.h"
+
 int main() {
-  // TODO(Stan): Implement
+  auto mfb = specto::makeMelFilterBands({
+    .numMelBands = 30,
+    .numFrequencyBins = 4096,
+    .sampleRate = 44100,
+  });
+  example_ui::drawUi(mfb);
   return 0;
 }

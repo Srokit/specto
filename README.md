@@ -23,9 +23,9 @@ Build (libs end up in ./build/out/lib)
 ```
 $ ./buildit.sh
 ```
-Run example
+Run spectogram example
 ```
-$ ./runexample.sh
+$ ./run_spectogram_example.sh
 ```
 Run unit tests
 ```

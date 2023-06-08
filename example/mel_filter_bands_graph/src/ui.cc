@@ -1,9 +1,9 @@
 /**
- * File: example/src/ui.cc
+ * File: example/mel_filter_bands_graph/src/ui.cc
  * Author: Stan Rokita <stan@stansa.dev>
- * Desc: UI example implementation.
+ * Desc: UI implementation for MFB example.
  * Version: 0.1
- * Date: 2023-06-02
+ * Date: 2023-06-08
  * 
  * Copyright: Copyright (c) 2023 Stan Rokita
  */
@@ -15,13 +15,14 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_ttf.h"
 
-#include "time_bar.h"
+// TODO(Stan): Investigate issue where the mel bands run off
+//             the screen on the right side before reaching bottom of screen
 
 namespace example_ui {
 
-void drawSpectogram(const specto::Spectogram& spectogram,
-                    float durationInS,
-                    const std::string& fontPath) {
+void drawUi(const specto::MelFilterBands& mfb) {
+  // TODO(Stan): Refactor the code shared here with spectogram example into
+  //             shared code
   SDL_Init(SDL_INIT_EVERYTHING);
   if (TTF_Init() < 0) {
     std::cerr << "Could not init TTF: " << TTF_GetError() << std::endl;
@@ -43,38 +44,40 @@ void drawSpectogram(const specto::Spectogram& spectogram,
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderClear(renderer);
 
-  int numWindows = spectogram->getNumWindows();
-  int numFreqBins = spectogram->getNumFrequencyBins();
+  int numFrequencyBins = mfb->getNumFrequencyBins();
+  int numMelBands = mfb->getNumMelBands();
 
-  int xDelta = kWindowWidth / numWindows;
-  int yDelta = kWindowHeight / numFreqBins;
+  float xDelta = static_cast<float>(kWindowWidth) / numFrequencyBins;
+  float yDelta = static_cast<float>(kWindowHeight) / numMelBands;
 
   int winStep = 1;
 
   // Need to jump over some windows to fit in the ui window
-  // TODO(Stan): Fix this code below, should be comparing to width not height
-  if (numWindows > kWindowHeight) {
-    std::cout << "Num Windows > kWindowHeight, Skipping some windows" << std::endl;
+  if (numFrequencyBins > kWindowWidth) {
+    std::cout << "Num Windows > kWindowWidth, Skipping some windows" << std::endl;
     xDelta = 1;
-    winStep = numWindows / kWindowHeight;
+    winStep = numFrequencyBins / kWindowWidth;
   }
 
   // Print UI Stats for debug
   std::cout << "Window Width: " << kWindowWidth << std::endl;
   std::cout << "Window Height: " << kWindowHeight << std::endl;
-  std::cout << "Num Windows (from spec): " << numWindows << std::endl;
-  std::cout << "Num Freq Bins (from spec): " << numFreqBins << std::endl;
+  std::cout << "Num Freq bins (from mfb): " << numFrequencyBins << std::endl;
+  std::cout << "Num Mel Bands (from mfb): " << numMelBands << std::endl;
   std::cout << "xDelta: " << xDelta << std::endl;
   std::cout << "yDelta: " << yDelta << std::endl;
+  std::cout << "winStep: " << winStep << std::endl;
+  std::cout << "MaxYWillBe: " << yDelta * numMelBands << std::endl;
 
-  for (int wI = 0; wI < numWindows; wI++) {
+  for (int wI = 0; wI < numFrequencyBins; wI++) {
     int w = wI * winStep;
-    for (int f = 0; f < numFreqBins; ++f) {
-      float loudnessFactor = spectogram->getLoudnessFactorAtWindowAndFreqBin(w, f);
-      SDL_SetRenderDrawColor(renderer, 255 * loudnessFactor, 0, 0, 255);
-      int x = static_cast<int>(static_cast<float>(xDelta) * static_cast<float>(w));
-      int y = static_cast<int>(static_cast<float>(yDelta) * static_cast<float>(f));
-      SDL_Rect rect = {x, y, xDelta, yDelta};
+    for (int f = 0; f < numMelBands; ++f) {
+      float loudnessFactor = mfb->getWeightAtFreqBinAndMelBand(w, f);
+      int x = static_cast<int>(xDelta * static_cast<float>(w));
+      int y = static_cast<int>(yDelta * static_cast<float>(f));
+      int xDeltaInt = static_cast<int>(xDelta);
+      int yDeltaInt = static_cast<int>(yDelta);
+      SDL_Rect rect = {x, y, xDeltaInt, yDeltaInt};
       int r = static_cast<int>(static_cast<float>(255) * loudnessFactor);
       SDL_SetRenderDrawColor(renderer, r, r, r, 255);
       SDL_RenderFillRect(renderer, &rect);
@@ -82,16 +85,6 @@ void drawSpectogram(const specto::Spectogram& spectogram,
   }
 
   std::cout << "Showing window..." << std::endl;
-
-  // Draw time bar at top
-  TimeBarOptions timeBarOptions {
-    .barHeight = 50,
-    .barWidth = kWindowWidth,
-    .totalDurationSec = durationInS,
-    .numTicks = 10,
-  };
-  TimeBar timeBar(timeBarOptions, fontPath);
-  timeBar.draw(renderer);
 
   SDL_RenderPresent(renderer);
 
