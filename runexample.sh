@@ -2,4 +2,4 @@
 
 # Run this script to try the example
 
-cmake --build ./build --target specto_example_run
+cmake --build ./build --target specto_spectogram_example_run

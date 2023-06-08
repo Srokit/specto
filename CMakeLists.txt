@@ -40,29 +40,45 @@ foreach(SPECTO_TARGET specto specto_static)
 endforeach()
 # ==== END specto lib definition
 
-# ==== START example executable
+# ==== START spectogram example executable
 set(EXAMPLE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/example)
-file(GLOB EXAMPLE_SOURCES "${EXAMPLE_DIR}/src/*.cc")
-add_executable(specto_example ${EXAMPLE_SOURCES})
+set(EX_SPECTOGRAM_DIR ${EXAMPLE_DIR}/spectogram)
+set(EX_SHARED_DIR ${EXAMPLE_DIR}/shared)
+file(GLOB EXAMPLE_SPEC_SOURCES "${EX_SPECTOGRAM_DIR}/src/*.cc")
+add_executable(specto_spectogram_example ${EXAMPLE_SPEC_SOURCES})
 # Change library to specto instead of specto_static to use shared lib
-target_link_libraries(specto_example specto_static)
-target_link_libraries(specto_example SDL2::SDL2)
-target_link_libraries(specto_example sdl_ttf::sdl_ttf)
-target_include_directories(specto_example PRIVATE ${SDL2_INCLUDE_DIRS})
-target_include_directories(specto_example PRIVATE ${sdl_ttf_INCLUDE_DIRS})
-target_link_libraries(specto_example audiofile::audiofile)
+target_link_libraries(specto_spectogram_example specto_static)
+target_link_libraries(specto_spectogram_example SDL2::SDL2)
+target_link_libraries(specto_spectogram_example sdl_ttf::sdl_ttf)
+target_include_directories(specto_spectogram_example PRIVATE ${SDL2_INCLUDE_DIRS})
+target_include_directories(specto_spectogram_example PRIVATE ${sdl_ttf_INCLUDE_DIRS})
+target_link_libraries(specto_spectogram_example audiofile::audiofile)
 # ==== END example executable
 
-# ==== START run example target
-set(SONG_PATH ${EXAMPLE_DIR}/res/TaylorSwift_IKnewYouWereTrouble_FullSong.wav)
+# ==== START run spectogram example target
+set(SONG_PATH ${EX_SPECTOGRAM_DIR}/res/TaylorSwift_IKnewYouWereTrouble_FullSong.wav)
 # Uncomment to use a different wav file
-# set(SONG_PATH ${EXAMPLE_DIR}/res/notes1.wav)
-set(TTF_PATH ${EXAMPLE_DIR}/res/arial_unicode.ttf)
+# set(SONG_PATH ${EX_SPECTOGRAM_DIR}/res/notes1.wav)
+set(TTF_PATH ${EX_SHARED_DIR}/res/arial_unicode.ttf)
 add_custom_target(
-        specto_example_run
-        COMMAND specto_example ${SONG_PATH} ${TTF_PATH}
+        specto_spectogram_example_run
+        COMMAND specto_spectogram_example ${SONG_PATH} ${TTF_PATH}
         WORKING_DIRECTORY ${CMAKE_PROJECT_DIR})
-# ==== END run example target
+# ==== END run spectogram example target
+
+# ==== START mel filter bands example executable
+set(EX_MEL_DIR ${EXAMPLE_DIR}/mel_filter_bands_graph)
+file(GLOB EXAMPLE_MEL_SOURCES "${EX_MEL_DIR}/src/*.cc")
+add_executable(specto_mel_example ${EXAMPLE_MEL_SOURCES})
+target_link_libraries(specto_mel_example specto_static)
+# ==== END mel filter bands example executable
+
+# ==== START run mel filter bands example target
+add_custom_target(
+        specto_mel_example_run
+        COMMAND specto_mel_example ${TTF_PATH}
+        WORKING_DIRECTORY ${CMAKE_PROJECT_DIR})
+# ==== END run mel filter bands example target
 
 # ==== START specto unit tests
 set(SPECTO_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
