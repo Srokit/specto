@@ -32,6 +32,11 @@ Run unit tests
 $ ./testit.sh
 ```
 
+To see an example of graphing the Mel filter banks which uses the internal MFB algo:
+```
+$ ./run_mel_example.sh
+```
+
 # API Example
 
 To load a file:
