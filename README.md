@@ -34,14 +34,41 @@ $ ./testit.sh
 
 # API Example
 
+To load a file:
+```
+spec->loadFile(filePath)
+```
+
+To load float vector data:
+```
+vector<float> samples = makeData();
+spec->loadDataWithSampleRate(samples, sampleRate)
+```
+
+After this data has been loaded...
+
+To get the num windows and num frequency (mel) bins generated:
+```
+int nw = spec->getNumWindows();
+int nf = spec->getNumFrequencyBins();
+```
+
+To get the loudness factor for a freq bin, window bin combo:
+Note this factor will be a float between 0 and 1
+```
+float val = spec->getLoudnessFactorAtWindowAndFreqBin(windowI, freqI);
+```
+
+Example of how to use with your own UI API:
 ```
 specto::Spectogram spec = specto::makeSpectogram();
+spec->loadFile(YOUR_filePath);
 for (int i = 0; i < spec->getNumWindows(); ++i) {
   for (int j = 0; j < spec->getNumFrequencyBins(); ++j) {
     int x = YOUR_calcX(spec->getNumWindows());
     int y = YOUR_calcY(spec->getNumFrequencyBins());
-    int dBFSVal = spec->getDBFSAtWindowIndexAndFrequencyBinIndex(i, j);
-    YOUR_drawSpectoSquareUsingDBFS(x, y, dBFSVal);
+    int loudFac = spec->getLoudnessFactorAtWindowAndFreqBin(i, j);
+    YOUR_drawSpectoSquareUsingLoudnessFac(x, y, loudFac);
   }
 }
 ```
