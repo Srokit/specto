@@ -10,10 +10,14 @@
 
 #pragma once
 
+#include <string>
+
 #include "specto/spectogram.h"
 
 namespace example_ui {
 
-void drawSpectogram(const specto::Spectogram&);
+void drawSpectogram(const specto::Spectogram&,
+                    float durationInS,
+                    const std::string& fontPath);
 
 }  // namespace example_ui

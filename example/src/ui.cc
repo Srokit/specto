@@ -13,11 +13,20 @@
 #include <iostream>
 
 #include "SDL2/SDL.h"
+#include "SDL2/SDL_ttf.h"
+
+#include "time_bar.h"
 
 namespace example_ui {
 
-void drawSpectogram(const specto::Spectogram& spectogram) {
+void drawSpectogram(const specto::Spectogram& spectogram,
+                    float durationInS,
+                    const std::string& fontPath) {
   SDL_Init(SDL_INIT_EVERYTHING);
+  if (TTF_Init() < 0) {
+    std::cerr << "Could not init TTF: " << TTF_GetError() << std::endl;
+    return;
+  }
   SDL_Window* window;
   SDL_Renderer* renderer;
   const int kWindowWidth = 1500;
@@ -37,8 +46,8 @@ void drawSpectogram(const specto::Spectogram& spectogram) {
   int numWindows = spectogram->getNumWindows();
   int numFreqBins = spectogram->getNumFrequencyBins();
 
-  int xDelta = 640 / numWindows;
-  int yDelta = 480 / numFreqBins;
+  int xDelta = kWindowWidth / numWindows;
+  int yDelta = kWindowHeight / numFreqBins;
 
   int winStep = 1;
 
@@ -73,6 +82,16 @@ void drawSpectogram(const specto::Spectogram& spectogram) {
 
   std::cout << "Showing window..." << std::endl;
 
+  // Draw time bar at top
+  TimeBarOptions timeBarOptions {
+    .barHeight = 50,
+    .barWidth = kWindowWidth,
+    .totalDurationSec = durationInS,
+    .numTicks = 10,
+  };
+  TimeBar timeBar(timeBarOptions, fontPath);
+  timeBar.draw(renderer);
+
   SDL_RenderPresent(renderer);
 
   SDL_Event e;
@@ -85,6 +104,7 @@ void drawSpectogram(const specto::Spectogram& spectogram) {
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
+  TTF_Quit();
 }
 
 }  // namespace example_ui

@@ -53,7 +53,7 @@ inline static constexpr SpectogramOptions defaultSpectogramOptions() {
   return {
     .windowLen = 16384,  // 2^14 (power of 2 preferred)
     .windowHop = 4096,  // 1/4th of above
-    .numMelBins = 128,
+    .numMelBins = 256,
   };
 }
 

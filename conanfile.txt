@@ -4,7 +4,8 @@ fftw/3.3.10
 
 [test_requires]
 gtest/1.10.0
-sdl/2.0.14
+sdl/2.26.1
+sdl_ttf/2.20.1
 
 [generators]
 CMakeDeps

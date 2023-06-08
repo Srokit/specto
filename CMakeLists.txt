@@ -13,6 +13,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # ==== START Conan Deps
 find_package(SDL2 REQUIRED)
+find_package(SDL2_ttf REQUIRED)
 find_package(FFTW3f REQUIRED)
 find_package(audiofile REQUIRED)
 # Test requires
@@ -46,14 +47,20 @@ add_executable(specto_example ${EXAMPLE_SOURCES})
 # Change library to specto instead of specto_static to use shared lib
 target_link_libraries(specto_example specto_static)
 target_link_libraries(specto_example SDL2::SDL2)
+target_link_libraries(specto_example sdl_ttf::sdl_ttf)
 target_include_directories(specto_example PRIVATE ${SDL2_INCLUDE_DIRS})
+target_include_directories(specto_example PRIVATE ${sdl_ttf_INCLUDE_DIRS})
+target_link_libraries(specto_example audiofile::audiofile)
 # ==== END example executable
 
 # ==== START run example target
 set(SONG_PATH ${EXAMPLE_DIR}/res/TaylorSwift_IKnewYouWereTrouble_FullSong.wav)
+# Uncomment to use a different wav file
+# set(SONG_PATH ${EXAMPLE_DIR}/res/notes1.wav)
+set(TTF_PATH ${EXAMPLE_DIR}/res/arial_unicode.ttf)
 add_custom_target(
         specto_example_run
-        COMMAND specto_example ${SONG_PATH}
+        COMMAND specto_example ${SONG_PATH} ${TTF_PATH}
         WORKING_DIRECTORY ${CMAKE_PROJECT_DIR})
 # ==== END run example target
 
